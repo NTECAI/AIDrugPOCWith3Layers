@@ -3,9 +3,9 @@ import cv2
 import numpy as np
 import torch
 from PIL import Image
-import pathlib
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
+# import pathlib
+# temp = pathlib.PosixPath
+# pathlib.PosixPath = pathlib.WindowsPath
 
 # Function to load a specified model
 def load_model(model_name):
