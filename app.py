@@ -17,8 +17,9 @@ else:
 
 # Function to load a specified model
 def load_model(model_name):
-    model_dict  = torch.load(f'models/{model_name}')
-    model = model_dict['model']
+    # model_dict  = torch.load(f'models/{model_name}')
+    # model = model_dict['model']
+    model = torch.hub.load('local', 'ultralytics/yolov5', path=f'models/{model_name}', force_reload=True, device=deviceoption)
     model.eval()
     return model
 
@@ -38,49 +39,24 @@ models = {
 }
 
 # Function to identify objects based on a given model
-# def identify_objects(image, model):
-#     # Convert PIL image to OpenCV format
-#     image = np.array(image)
-#     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-#     # Run object identification
-#     results = model(image)
-
-#     # Process results
-#     objects = []
-#     for result in results.xyxy[0]:
-#         x1, y1, x2, y2, conf, cls = result
-#         name = model.names[int(cls)]
-#         if conf.item() >0.6:
-#             objects.append([name, conf.item(), (x1, y1, x2, y2)])
-
-#     return objects
-
 def identify_objects(image, model):
     # Convert PIL image to OpenCV format
     image = np.array(image)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    # Preprocess the image
-    image = torch.from_numpy(image).permute(2, 0, 1).float()
-    image /= 255.0
-    image = image.unsqueeze(0)
+    # Run object identification
+    results = model(image)
 
-    # Convert the input tensor to the same data type as the model weights
-    model_dtype = next(model.parameters()).dtype
-    image = image.to(model_dtype)
-
-    # Pass the image through the model
-    with torch.no_grad():
-        results = model(image)
-
-    # Process the results
+    # Process results
     objects = []
-    for result in results[0]:
-        # Process the result as needed
-        objects.append(result)
+    for result in results.xyxy[0]:
+        x1, y1, x2, y2, conf, cls = result
+        name = model.names[int(cls)]
+        if conf.item() >0.6:
+            objects.append([name, conf.item(), (x1, y1, x2, y2)])
 
     return objects
+
 
 def add_background(image):
     # Create a new image with the desired background color
