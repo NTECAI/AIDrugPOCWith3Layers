@@ -20,7 +20,8 @@ wget.download("https://github.com/NTECAI/AIDrugPOCWith3Layers/blob/main/models/s
 
 # Function to load a specified model
 def load_model(model_name):
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/{model_name}', force_reload=True, device=deviceoption)
+    # model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/{model_name}', force_reload=True, device=deviceoption)
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/white_round_1_best.pt', force_reload=True, device=deviceoption)
     model.eval()
     return model
 
