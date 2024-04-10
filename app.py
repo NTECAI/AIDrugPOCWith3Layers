@@ -103,8 +103,7 @@ def main():
         image = Image.open(uploaded_file)
 
         # Perform shape identification
-        # shapes = identify_objects(image, shape_model)
-        shapes = color
+        shapes = identify_objects(image, shape_model)
 
         # Perform color identification
         colors = identify_objects(image, color_model)
