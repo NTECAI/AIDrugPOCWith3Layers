@@ -26,7 +26,7 @@ def load_model(model_name):
     return model
 
 # Load shape identification model
-# shape_model = load_model('shape_best.pt')
+shape_model = load_model('shape_best.pt')
 
 # # Load color identification model
 color_model = load_model('color_best.pt')
