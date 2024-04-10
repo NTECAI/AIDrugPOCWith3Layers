@@ -19,8 +19,7 @@ else:
 
 # Function to load a specified model
 def load_model(model_name):
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/{model_name}', force_reload=True, device=deviceoption)
-    # model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/white_capsule_best.pt', force_reload=True, device=deviceoption)
+    model = torch.load(f'models/{model_name}')
     model.eval()
     return model
 
