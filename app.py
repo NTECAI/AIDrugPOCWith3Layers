@@ -19,7 +19,7 @@ else:
 
 # Function to load a specified model
 def load_model(model_name):
-    model = torch.load(f'models/{model_name}')
+    model_dict  = torch.load(f'models/{model_name}')
     model = model_dict['model']
     model.eval()
     return model
