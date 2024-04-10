@@ -16,12 +16,12 @@ else:
                                     'cpu', 'cuda'], disabled=True, index=0)
 
 
-wget.download("https://github.com/NTECAI/AIDrugPOCWith3Layers/blob/main/models/shape_best.pt", out="models/")
+# wget.download("https://github.com/NTECAI/AIDrugPOCWith3Layers/blob/main/models/shape_best.pt", out="models/")
 
 # Function to load a specified model
 def load_model(model_name):
     # model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/{model_name}', force_reload=True, device=deviceoption)
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/shape_best.pt', force_reload=True, device=deviceoption)
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/color_best.pt', force_reload=True, device=deviceoption)
     model.eval()
     return model
 
