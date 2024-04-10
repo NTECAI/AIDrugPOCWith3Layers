@@ -29,11 +29,11 @@ color_model = load_model('color_best.pt')
 
 # Define the list of models
 models = {
-    ('Green', 'Round'): ['green_round_best.pt'],
-    ('Orange', 'Capsule'): ['orange_capsule_best.pt'],
+    # ('Green', 'Round'): ['green_round_best.pt'],
+    # ('Orange', 'Capsule'): ['orange_capsule_best.pt'],
     ('Orange', 'Round'): ['orange_round_1_best.pt', 'orange_round_2_best.pt'],
     ('White', 'Capsule'): ['white_capsule_best.pt'],
-    ('White', 'Round'): ['white_round_1_best.pt', 'white_round_2_best.pt', 'white_round_6_best.pt'],
+    ('White', 'Round'): ['white_round_1_best.pt', 'white_round_6_best.pt'],
 }
 
 # Function to identify objects based on a given model
