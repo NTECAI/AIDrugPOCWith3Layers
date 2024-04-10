@@ -8,19 +8,9 @@ import wget
 # temp = pathlib.PosixPath
 # pathlib.PosixPath = pathlib.WindowsPath
 
-if torch.cuda.is_available():
-    deviceoption = st.sidebar.radio("Select compute Device.", [
-                                    'cpu', 'cuda'], disabled=False, index=1)
-else:
-    deviceoption = st.sidebar.radio("Select compute Device.", [
-                                    'cpu', 'cuda'], disabled=True, index=0)
-
-
-# wget.download("https://github.com/NTECAI/AIDrugPOCWith3Layers/blob/main/models/shape_best.pt", out="models/")
-
 # Function to load a specified model
 def load_model(model_name):
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/{model_name}', force_reload=True, device=deviceoption)
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/{model_name}', force_reload=True)
     # model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/white_capsule_best.pt', force_reload=True, device=deviceoption)
     model.eval()
     return model
