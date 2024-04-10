@@ -1,30 +1,31 @@
-# import streamlit as st
-# import cv2
-# import numpy as np
-# import torch
-# from PIL import Image
-# import pathlib
-# temp = pathlib.PosixPath
-# pathlib.PosixPath = pathlib.WindowsPath
+import streamlit as st
+import cv2
+import numpy as np
+import torch
+from PIL import Image
+import wget
+import pathlib
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
-# if torch.cuda.is_available():
-#     deviceoption = st.sidebar.radio("Select compute Device.", [
-#                                     'cpu', 'cuda'], disabled=False, index=1)
-# else:
-#     deviceoption = st.sidebar.radio("Select compute Device.", [
-#                                     'cpu', 'cuda'], disabled=True, index=0)
+if torch.cuda.is_available():
+    deviceoption = st.sidebar.radio("Select compute Device.", [
+                                    'cpu', 'cuda'], disabled=False, index=1)
+else:
+    deviceoption = st.sidebar.radio("Select compute Device.", [
+                                    'cpu', 'cuda'], disabled=True, index=0)
 
 
-# wget.download("https://github.com/NTECAI/AIDrugPOCWith3Layers/tree/main/models/*", out="models/")
+wget.download("https://github.com/NTECAI/AIDrugPOCWith3Layers/blob/main/models/shape_best.pt", out="models/")
 
-# # Function to load a specified model
-# def load_model(model_name):
-#     model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/{model_name}', force_reload=True, device=deviceoption)
-#     model.eval()
-#     return model
+# Function to load a specified model
+def load_model(model_name):
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'models/{model_name}', force_reload=True, device=deviceoption)
+    model.eval()
+    return model
 
-# # Load shape identification model
-# shape_model = load_model('shape_best.pt')
+# Load shape identification model
+shape_model = load_model('shape_best.pt')
 
 # # Load color identification model
 # color_model = load_model('color_best.pt')
@@ -148,73 +149,3 @@
 # if __name__ == "__main__":
 #     main()
 
-
-import streamlit as st
-import torch
-from PIL import Image
-from io import *
-import glob
-from datetime import datetime
-import os
-# import wget
-
-
-
-# Configurations
-CFG_MODEL_PATH = "models/white_round_1_best.pt"
-CFG_ENABLE_URL_DOWNLOAD = False
-CFG_ENABLE_VIDEO_PREDICTION = False
-if CFG_ENABLE_URL_DOWNLOAD:
-    # Configure this if you set cfg_enable_url_download to True
-    url = "https://github.com/NTECAI/AIDrugPOCv5/raw/main/models/eDrug.pt"
-# End of Configurations
-def main():
-    if CFG_ENABLE_URL_DOWNLOAD:
-        downloadModel()
-        
-    else:
-        if not os.path.exists(CFG_MODEL_PATH):
-            st.error(
-                'Model not found, please config if you wish to download model from url set `cfg_enable_url_download = True`  ', icon="⚠️")
-
-    # -- Sidebar
-    st.sidebar.title('⚙️ Options')
-    datasrc = st.sidebar.radio("Select input source.", [
-                               'From example data.', 'Upload your own data.'])
-
-    if CFG_ENABLE_VIDEO_PREDICTION:
-        option = st.sidebar.radio("Select input type.", ['Image', 'Video'])
-    else:
-        option = st.sidebar.radio("Select input type.", ['Image'])
-    if torch.cuda.is_available():
-        deviceoption = st.sidebar.radio("Select compute Device.", [
-                                        'cpu', 'cuda'], disabled=False, index=1)
-    else:
-        deviceoption = st.sidebar.radio("Select compute Device.", [
-                                        'cpu', 'cuda'], disabled=True, index=0)
-    # -- End of Sidebar
-
-    st.header('📦 YOLOv5 Streamlit Deployment Example')
-    st.sidebar.markdown(
-        "https://github.com/thepbordin/Obstacle-Detection-for-Blind-people-Deployment")
-
-    if option == "Image":
-        loadmodel(deviceoption)
-
-
-# Downlaod Model from url.
-@st.cache_resource
-def downloadModel():
-    if not os.path.exists(CFG_MODEL_PATH):
-        wget.download(url, out="models/")
-        
-
-@st.cache_resource
-def loadmodel(device):
-
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=CFG_MODEL_PATH, force_reload=True, device=device)
-    return model
-
-
-if __name__ == '__main__':
-    main()
