@@ -33,7 +33,7 @@ models = {
     ('Orange', 'Capsule'): ['orange_capsule_best.pt'],
     ('Orange', 'Round'): ['orange_round_1_best.pt', 'orange_round_2_best.pt'],
     ('White', 'Capsule'): ['white_capsule_best.pt'],
-    ('White', 'Round'): ['white_round_1_best.pt', 'white_round_2_best.pt', 'white_round_3_best.pt', 'white_round_4_best.pt'],
+    ('White', 'Round'): ['white_round_1_best.pt', 'white_round_2_best.pt', 'white_round_3_best.pt'],
 }
 
 # Function to identify objects based on a given model
