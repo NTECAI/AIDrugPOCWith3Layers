@@ -4,9 +4,9 @@ import numpy as np
 import torch
 from PIL import Image
 import wget
-import pathlib
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
+# import pathlib
+# temp = pathlib.PosixPath
+# pathlib.PosixPath = pathlib.WindowsPath
 
 if torch.cuda.is_available():
     deviceoption = st.sidebar.radio("Select compute Device.", [
