@@ -157,7 +157,7 @@ import glob
 from datetime import datetime
 import os
 # import wget
-from video_predict import runVideo
+
 
 
 # Configurations
