@@ -67,7 +67,8 @@ def identify_objects(image, model):
     image = image.unsqueeze(0)
 
     # Convert the input tensor to the same data type as the model weights
-    image = image.to(model.weight.dtype)
+    model_dtype = next(model.parameters()).dtype
+    image = image.to(model_dtype)
 
     # Pass the image through the model
     with torch.no_grad():
