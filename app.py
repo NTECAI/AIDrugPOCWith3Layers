@@ -15,8 +15,6 @@ else:
     deviceoption = st.sidebar.radio("Select compute Device.", [
                                     'cpu', 'cuda'], disabled=True, index=0)
 
-# wget.download("https://github.com/NTECAI/AIDrugPOCWith3Layers/blob/main/models/shape_best.pt", out="models/")
-
 # Function to load a specified model
 def load_model(model_name):
     model_dict  = torch.load(f'models/{model_name}')
@@ -40,21 +38,43 @@ models = {
 }
 
 # Function to identify objects based on a given model
+# def identify_objects(image, model):
+#     # Convert PIL image to OpenCV format
+#     image = np.array(image)
+#     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+#     # Run object identification
+#     results = model(image)
+
+#     # Process results
+#     objects = []
+#     for result in results.xyxy[0]:
+#         x1, y1, x2, y2, conf, cls = result
+#         name = model.names[int(cls)]
+#         if conf.item() >0.6:
+#             objects.append([name, conf.item(), (x1, y1, x2, y2)])
+
+#     return objects
+
 def identify_objects(image, model):
     # Convert PIL image to OpenCV format
     image = np.array(image)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    # Run object identification
-    results = model(image)
+    # Preprocess the image
+    image = torch.from_numpy(image).permute(2, 0, 1).float()
+    image /= 255.0
+    image = image.unsqueeze(0)
 
-    # Process results
+    # Pass the image through the model
+    with torch.no_grad():
+        results = model(image)
+
+    # Process the results
     objects = []
-    for result in results.xyxy[0]:
-        x1, y1, x2, y2, conf, cls = result
-        name = model.names[int(cls)]
-        if conf.item() >0.6:
-            objects.append([name, conf.item(), (x1, y1, x2, y2)])
+    for result in results[0]:
+        # Process the result as needed
+        objects.append(result)
 
     return objects
 
