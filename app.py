@@ -85,7 +85,7 @@ def draw_bounding_boxes(image, objects):
 def main():
     st.title("Object Identification")
 
-    option = st.selectbox("Options", ("Capture Image", "Upload Image"))
+    option = st.selectbox("Options", ("Upload Image", "Capture Image"))
 
     if option == "Capture Image":
         st.write("Click the button below to capture an image:")
