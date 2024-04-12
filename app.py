@@ -4,16 +4,9 @@ import numpy as np
 import torch
 from PIL import Image
 import wget
-# import pathlib
-# temp = pathlib.PosixPath
-# pathlib.PosixPath = pathlib.WindowsPath
-
-if torch.cuda.is_available():
-    deviceoption = st.sidebar.radio("Select compute Device.", [
-                                    'cpu', 'cuda'], disabled=False, index=1)
-else:
-    deviceoption = st.sidebar.radio("Select compute Device.", [
-                                    'cpu', 'cuda'], disabled=True, index=0)
+import pathlib
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
 # Function to load a specified model
 def load_model(model_name):
@@ -92,12 +85,23 @@ def draw_bounding_boxes(image, objects):
 def main():
     st.title("Object Identification")
 
-    # File uploader
-    uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
+    option = st.selectbox("Options", ("Capture Image", "Upload Image"))
 
+    if option == "Capture Image":
+        st.write("Click the button below to capture an image:")
+        picture = st.camera_input("Take a picture")
+        uploaded_file = picture
+
+    elif option == "Upload Image":
+        uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
+    
+
+    
     if uploaded_file is not None:
         # Read image
         image = Image.open(uploaded_file)
+
+    
 
         # Perform shape identification
         shapes = identify_objects(image, shape_model)
@@ -140,8 +144,6 @@ def main():
         else:
             st.error("No model found.")
 
-        # Display output image
-        # st.image(image, channels="RGB")
 
 
 if __name__ == "__main__":
