@@ -1,3 +1,8 @@
+import os
+import pandas as pd
+from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+
 import streamlit as st
 import cv2
 import numpy as np
@@ -106,44 +111,82 @@ def main():
         # Perform shape identification
         shapes = identify_objects(image, shape_model)
 
-        # Perform color identification
-        colors = identify_objects(image, color_model)
-
-        # Display results
         st.header("1. Shapes:")
         for shape in shapes[:1]:
             st.write(shape[:2])
+
+
+        # Perform color identification
+        colors = identify_objects(image, color_model)
 
         st.header("2. Colors:")
         for color in colors[:1]:
             st.write(color[:2])
 
-        # Call the specified model based on color and shape combination
-        color_label = colors[0][0] if colors else None
-        shape_label = shapes[0][0] if shapes else None
+        # # Call the specified model based on color and shape combination
+        # color_label = colors[0][0] if colors else None
+        # shape_label = shapes[0][0] if shapes else None
         
     
-        if color_label and shape_label and (color_label, shape_label) in models:
-            model_names = models[(color_label, shape_label)]
-            st.header("3. Identified Drugs:")
-            for model_name in model_names:
-                loaded_model = load_model(model_name)
-                drugs = identify_objects(image, loaded_model)
-                # threshold control
-                if drugs:
-                    st.write(model_name, drugs[:1][0][:2])
+        # if color_label and shape_label and (color_label, shape_label) in models:
+        #     model_names = models[(color_label, shape_label)]
+        #     st.header("3. Identified Drugs:")
+        #     for model_name in model_names:
+        #         loaded_model = load_model(model_name)
+        #         drugs = identify_objects(image, loaded_model)
+        #         # threshold control
+        #         if drugs:
+        #             st.write(model_name, drugs[:1][0][:2])
 
-                    # Prepare objects for drawing bounding boxes
-                    objects = [(drug[0], drug[2]) for drug in drugs]
-                    # st.write(objects)
-                    # Draw bounding boxes on the image
-                    output_image = draw_bounding_boxes(image, objects)
+        #             # Prepare objects for drawing bounding boxes
+        #             objects = [(drug[0], drug[2]) for drug in drugs]
+        #             # st.write(objects)
+        #             # Draw bounding boxes on the image
+        #             output_image = draw_bounding_boxes(image, objects)
 
-                    # Display the image with bounding boxes
-                    st.image(output_image, channels="RGB")
-        else:
-            st.error("No model found.")
+        #             # Display the image with bounding boxes
+        #             st.image(output_image, channels="RGB")
+        # else:
+        #     st.error("No model found.")
 
+        
+        st.header("3. OCR results:")    
+        OCR_layer(uploaded_file)
+    
+
+
+def OCR_layer(uploaded_file):
+    df = pd.read_csv("csv_Drugimg_AHNH_archive.csv",encoding="Big5")
+    df = df[["code","color","shape","imprint1", "imprint2"]][df["imprint1"].notna()]
+    # st.dataframe(df) 
+
+    # Replace 'your-endpoint' and 'your-key' with your Azure endpoint and key
+    endpoint = "https://jiminstance123.cognitiveservices.azure.com/"
+    key = "38b8408fcb7e42488b8a4c2289997a07"
+
+    # Create a client to interact with the Azure Form Recognizer service
+    document_analysis_client = DocumentAnalysisClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
+    )
+
+    file_bytes = uploaded_file.getvalue() if hasattr(uploaded_file, "getvalue") else uploaded_file.read()
+
+    # Polling the service for the result
+    poller = document_analysis_client.begin_analyze_document("prebuilt-document", file_bytes)
+    result = poller.result()
+
+    # Extract and display the information
+    extracted_text  = [line.content for page in result.pages for line in page.lines]
+    extracted_text 
+
+    if not extracted_text:
+        possible_drugs = df[(df['imprint1']=='[NOIMPRINT]') | (df['imprint2']=='[NOIMPRINT]')]
+    else:
+        search_terms = '|'.join(extracted_text)
+        possible_drugs = df[(df['imprint1'].str.contains(search_terms)) | (df['imprint2'].str.contains(search_terms))]
+
+    st.dataframe(possible_drugs) 
 
 
 if __name__ == "__main__":
