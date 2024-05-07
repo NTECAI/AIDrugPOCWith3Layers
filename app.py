@@ -67,7 +67,7 @@ def main():
         shape
         
         st.header("3. OCR results:")    
-        # OCR_layer(uploaded_file, color, shape)
+        OCR_layer(uploaded_file, color, shape)
     
 def get_OCR_results(uploaded_file):
     
