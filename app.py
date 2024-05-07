@@ -71,7 +71,7 @@ def main():
         image.size
         
         st.header("3. OCR results:")    
-        # OCR_layer(uploaded_file, color, shape)
+        OCR_layer(uploaded_file, color, shape)
 
 def resize_image(image):
     width, height = image.size
