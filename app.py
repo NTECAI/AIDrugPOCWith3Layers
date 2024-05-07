@@ -62,9 +62,9 @@ def main():
         color = infer_result(color_model, image)
         st.write(color)
 
-        # st.header("2. Shape:") 
-        # shape = infer_result(shape_model, image)
-        # shape
+        st.header("2. Shape:") 
+        shape = infer_result(shape_model, image)
+        shape
 
         image.size
         image = resize_image(image)
