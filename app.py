@@ -33,7 +33,10 @@ def infer_result(model, image):
     boxes = res[0].boxes
     res_plotted = res[0].plot()[:, :, ::-1]
     st.image(res_plotted)
-    return json.loads(res[0].tojson())[0]['name']
+    if json.loads(res[0].tojson()) == []:
+        return ""
+    else:
+        return json.loads(res[0].tojson())[0]['name']
 
 # Streamlit app
 def main():
@@ -57,7 +60,7 @@ def main():
 
         st.header("1. Color:") 
         color = infer_result(color_model, image)
-        color
+        st.write(color)
 
         st.header("2. Shape:") 
         shape = infer_result(shape_model, image)
