@@ -33,10 +33,10 @@ def infer_result(model, image):
     boxes = res[0].boxes
     res_plotted = res[0].plot()[:, :, ::-1]
     st.image(res_plotted)
-    if json.loads(res[0].tojson()) == []:
-        return ""
-    else:
+    try:
         return json.loads(res[0].tojson())[0]['name']
+    except:
+        return ""
 
 # Streamlit app
 def main():
@@ -67,7 +67,7 @@ def main():
         shape
         
         st.header("3. OCR results:")    
-        OCR_layer(uploaded_file, color, shape)
+        # OCR_layer(uploaded_file, color, shape)
     
 def get_OCR_results(uploaded_file):
     
