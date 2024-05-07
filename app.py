@@ -71,8 +71,8 @@ def main():
     
 def get_OCR_results(uploaded_file):
     
-    endpoint = "https://jiminstance123.cognitiveservices.azure.com/"
-    key = "38b8408fcb7e42488b8a4c2289997a07"
+    endpoint = "https://jiminstance2.cognitiveservices.azure.com/"
+    key = "d39e4df1460d44b4bd86b2b8e9081094"
 
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint,
