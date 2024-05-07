@@ -62,13 +62,30 @@ def main():
         color = infer_result(color_model, image)
         st.write(color)
 
-        st.header("2. Shape:") 
-        shape = infer_result(shape_model, image)
-        shape
+        # st.header("2. Shape:") 
+        # shape = infer_result(shape_model, image)
+        # shape
+
+        image.size
+        image = resize_image(image)
+        image.size
         
         st.header("3. OCR results:")    
-        OCR_layer(uploaded_file, color, shape)
-    
+        # OCR_layer(uploaded_file, color, shape)
+
+def resize_image(image):
+    width, height = image.size
+    image_size = width * height
+    if image_size > 4 * 1024 * 1024:  # 4MB 的大小限制
+        # 調整圖片大小
+        new_width = int(image.size[0] * 0.5)  # 縮小一半的寬度
+        new_height = int(image.size[1] * 0.5)  # 縮小一半的高度
+        resized_image = image.resize((new_width, new_height))
+        st.write("image resized")
+
+        return resized_image
+    return image
+
 def get_OCR_results(uploaded_file):
     
     endpoint = "https://jiminstance2.cognitiveservices.azure.com/"
