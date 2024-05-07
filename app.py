@@ -1,4 +1,5 @@
 import os
+import io
 import pandas as pd
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
@@ -66,47 +67,54 @@ def main():
         shape = infer_result(shape_model, image)
         shape
 
-        image.size
-        image = resize_image(image)
-        image.size
-        
+        if uploaded_file.size > 4 * 1024 * 1024:  # more than 4MB
+            st.write("Resizing image...")
+            image = resize_image(image)
+
         st.header("3. OCR results:")    
-        OCR_layer(uploaded_file, color, shape)
+        OCR_layer(image, color, shape)
 
 def resize_image(image):
+    # Get current dimensions
     width, height = image.size
-    image_size = width * height
-    if image_size > 4 * 1024 * 1024:  # 4MB 的大小限制
-        # 調整圖片大小
-        new_width = int(image.size[0] * 0.5)  # 縮小一半的寬度
-        new_height = int(image.size[1] * 0.5)  # 縮小一半的高度
-        resized_image = image.resize((new_width, new_height))
-        st.write("image resized")
-
-        return resized_image
-    return image
-
-def get_OCR_results(uploaded_file):
     
-    endpoint = "https://jiminstance2.cognitiveservices.azure.com/"
-    key = "d39e4df1460d44b4bd86b2b8e9081094"
+    # Calculate new dimensions
+    new_width = int(width * 0.5)
+    new_height = int(height * 0.5)
+    
+    # Resize the image
+    resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    st.write(resized_image.size)
+    return resized_image
+
+def get_OCR_results(image):
+    
+    endpoint = "https://jiminstance3.cognitiveservices.azure.com/"
+    key = "5d5d09b9bb0a49cbb22a0ade99f0f2ca"
 
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key)
     )
 
-    file_bytes = uploaded_file.getvalue() if hasattr(uploaded_file, "getvalue") else uploaded_file.read()
+    # Convert image to bytes
+    img_byte_arr = io.BytesIO()
+    if image.format is None:
+        image_format = 'JPEG'
+    else:
+        image_format = image.format
+    image.save(img_byte_arr, format=image_format)
+    img_byte_arr = img_byte_arr.getvalue()
 
     # Polling the service for the result
-    poller = document_analysis_client.begin_analyze_document("prebuilt-document", file_bytes)
+    poller = document_analysis_client.begin_analyze_document("prebuilt-document", img_byte_arr)
     result = poller.result()
 
     # Extract and display the information
     extracted_text  = [line.content for page in result.pages for line in page.lines]
     return extracted_text 
 
-def OCR_layer(uploaded_file, color, shape):
+def OCR_layer(image, color, shape):
 
     # data preprocessing
     df = pd.read_csv("csv_Drugimg_AHNH_archive.csv",encoding="Big5")
@@ -114,7 +122,7 @@ def OCR_layer(uploaded_file, color, shape):
     df['shape'] = df['shape'].str.replace(' ', '')
     # st.dataframe(df) 
 
-    extracted_text = get_OCR_results(uploaded_file)
+    extracted_text = get_OCR_results(image)
     extracted_text
     # Filter results
 
